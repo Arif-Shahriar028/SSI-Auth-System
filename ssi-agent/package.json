@@ -1,0 +1,29 @@
+{
+  "name": "ssi-agent",
+  "packageManager": "yarn@3.6.4",
+  "scripts": {
+    "start": "ts-node src/index.ts"
+  },
+  "devDependencies": {
+    "@credo-ts/anoncreds": "0.5.3",
+    "@credo-ts/askar": "0.5.3",
+    "@credo-ts/core": "0.5.3",
+    "@credo-ts/indy-vdr": "0.5.3",
+    "@credo-ts/node": "0.5.3",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
+    "@types/mongoose": "^5.11.97",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "@hyperledger/anoncreds-nodejs": "^0.2.2",
+    "@hyperledger/aries-askar-nodejs": "^0.2.3",
+    "@hyperledger/indy-vdr-nodejs": "^0.2.2",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.0",
+    "express": "^5.1.0",
+    "mongoose": "^8.9.3",
+    "winston": "^3.17.0"
+  }
+}
