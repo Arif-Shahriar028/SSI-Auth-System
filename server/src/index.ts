@@ -5,6 +5,9 @@ import connectionRouter from './routes/connection.routes';
 import credentialRouter from './routes/credential.routes';
 import otpRouter from './routes/otp.routes';
 import webhookRouter from './routes/webhook.routes';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const app = express()
 

@@ -18,11 +18,11 @@ const mailSender = async (email: string, otp: string): Promise<void> => {
     });
 
     const mailOptions: MailOptions = {
-        from: `BRACU`,
+        from: `E-Shop`,
         to: email,
-        subject: 'BRACU Portal 2FA Code',
-        text: `Your email authentication code is ${otp}`,
-        html: `<p>Your email authentication code is <strong>${otp}</strong></p>`
+        subject: 'E-Shop 2FA Code',
+        text: `${otp} is your email authentication code`,
+        html: `<p><strong>${otp}</strong> is your email authentication code</p>`
     };
 
     const result = await transport.sendMail(mailOptions);

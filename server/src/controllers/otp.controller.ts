@@ -11,6 +11,7 @@ export class OtpController {
             console.log('------> OTP Send <------');
             const { email } = req.body;
             const cachedResult = await getCache(genHash(email));
+            
             if (cachedResult.value !== null) {
                      res
                     .status(200)
@@ -22,7 +23,7 @@ export class OtpController {
 
             res.status(201).send({ message: 'OTP sent', otpSent: true });
         } catch (e) {
-            res.status(400).send({ error: (e as Error).message, otpSent: false });
+            res.status(500).send({ error: (e as Error).message, otpSent: false });
         }
     }
 
@@ -36,9 +37,9 @@ export class OtpController {
                 return;
             }
             await deleteCache(genHash(email));
-            res.status(200).send({ isVerified: true });
+            res.status(200).send({ isVerified: true, email });
         } catch (e) {
-            res.status(400).send({ message: (e as Error).message });
+            res.status(500).send({ message: (e as Error).message });
         }
     }
 }
