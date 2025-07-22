@@ -31,6 +31,7 @@ export default function createRoute(agent: BaseAgent) {
 
   // Proof-request routes
   router.post('/send-proof-request', (req, res) => ProofController.sendProofRequest(req, res, agent));
+  router.post('/send-conn-less-proof-request', (req, res) => ProofController.sendConnLessProofRequest(req, res, agent));
   router.get('/proof-records', (req, res) => ProofController.getProofRecords(req, res, agent));
   router.get('/proof-record', (req, res) => ProofController.getProofRecord(req, res, agent));
   router.get('/proof-data/:proofRecordId', (req, res) => ProofController.getProofData(req, res, agent));

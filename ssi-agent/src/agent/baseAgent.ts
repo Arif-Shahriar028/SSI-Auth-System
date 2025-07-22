@@ -3,7 +3,7 @@ import { AgentModules, baseAgentModule } from "./modules";
 import { agentDependencies, HttpInboundTransport } from '@credo-ts/node';
 import * as crypto from 'crypto'
 import { AnonCredsSchema } from "@credo-ts/anoncreds";
-import { AcceptInvitationOptions, AttributeElement, CreateInvitationOptions, GetConnectionsOptions, SendProofRequest } from "../types/anoncreds.types";
+import { AcceptInvitationOptions, AttributeElement, CreateInvitationOptions, GetConnectionsOptions, SendConnLessProofRequest, SendProofRequest } from "../types/anoncreds.types";
 import { webhookCall } from "../utils/network-call";
 
 export class BaseAgent {
@@ -235,6 +235,34 @@ export class BaseAgent {
                 }
             }
         })
+    }
+
+    public async sendConnLessProofRequest({ proofRequestlabel, version, attributes, predicates }: SendConnLessProofRequest) {
+        const {message, proofRecord} = await this.agent.proofs.createRequest({
+            protocolVersion: 'v2',
+            proofFormats: {
+                anoncreds: {
+                    // nonce: Date.now().toString(),
+                    name: proofRequestlabel,
+                    version: version || '1.0.0',
+                    requested_attributes: attributes,
+                    requested_predicates: predicates,
+                }
+            }
+        });
+
+        const outOfBandRecord = await this.agent.oob.createInvitation({
+            handshake: false,
+            messages: [message]
+        });
+
+        const invitationUrl = outOfBandRecord.outOfBandInvitation.toUrl({
+            domain: this.endpoints[0]
+        })
+
+        console.log('------>>>> invitation url: ', invitationUrl);
+
+        return invitationUrl;
     }
 
     public async getProofRecords(proofRecordId?: string) {

@@ -9,7 +9,7 @@ export class ProofController {
     const { proofRequestlabel, connectionId, version } = req.body;
     const attributes: Record<string, AnonCredsRequestedAttribute> = {
       name: {
-        names: ["name", "registrationNo", "department", "session", "cgpa", "graduationDate"],
+        names: ["name", "email", "phone"],
         restrictions:
           agent.credentialDefinitionId
             ? [{ cred_def_id: agent.credentialDefinitionId }]
@@ -43,6 +43,35 @@ export class ProofController {
         // predicates,
       });
       res.status(200).send(result);
+    } catch (error: any) {
+      res.status(500).send({ error: error.message });
+    }
+  }
+
+  static async sendConnLessProofRequest(req: Request, res: Response, agent: BaseAgent){
+    const { proofRequestlabel, version } = req.body;
+    const attributes: Record<string, AnonCredsRequestedAttribute> = {
+      name: {
+        names: ["name", "email", "phone"],
+        restrictions:
+          agent.credentialDefinitionId
+            ? [{ cred_def_id: agent.credentialDefinitionId }]
+            : [],
+      },
+    };
+    
+    if (!proofRequestlabel) {
+      return res.status(400).send({ error: "proofRequestlabel is required" });
+    }
+
+    try {
+      const result = await agent.sendConnLessProofRequest({
+        proofRequestlabel,
+        version,
+        attributes,
+        // predicates,
+      });
+      res.status(200).send({success: true, data: result});
     } catch (error: any) {
       res.status(500).send({ error: error.message });
     }

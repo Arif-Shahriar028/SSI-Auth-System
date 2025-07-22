@@ -25,6 +25,13 @@ export type SendProofRequest = {
     predicates?: Record<string, AnonCredsRequestedPredicate>
 }
 
+export type SendConnLessProofRequest = {
+    proofRequestlabel: string,
+    version?: string,
+    attributes?: Record<string, AnonCredsRequestedAttribute>
+    predicates?: Record<string, AnonCredsRequestedPredicate>
+}
+
 export type AttributeElement = {
     name: string,
     value: string
