@@ -5,13 +5,19 @@ import connectionRouter from './routes/connection.routes';
 import credentialRouter from './routes/credential.routes';
 import otpRouter from './routes/otp.routes';
 import webhookRouter from './routes/webhook.routes';
+import proofRouter from './routes/proof.routes';
+import authRouter from './routes/auth.routes';
 import dotenv from 'dotenv';
+import { DbConnector } from './lib/db';
+import WebSocketService from './services/websocket.service';
 
 dotenv.config();
 
-const app = express()
+DbConnector.connect({ host: process.env.DB_URL as string });
 
-app.use(cookieParser())
+const app = express();
+
+app.use(cookieParser());
 app.use(express.json());
 
 app.use(cors(
@@ -28,11 +34,15 @@ app.use(cors(
 
 app.use('/connection', connectionRouter);
 app.use('/credential', credentialRouter);
+app.use('/proof', proofRouter);
 app.use('/otp', otpRouter);
 app.use('/webhooks', webhookRouter);
+app.use('/auth', authRouter);
 
 
 
-app.listen(5000, async ()=> {
-  console.log('server started at port 5000');
-})
+const server = app.listen(9009, async ()=> {
+  console.log('server started at port 9009');
+});
+
+WebSocketService.getInstance().initialize(server);

@@ -6,7 +6,7 @@ const router: Router = Router();
 //todo: add apiKeyAuth here
 
 // student specific
-// router.post('/proof-state', WebhookController.handleProofState);
+router.post('/proof-state', WebhookController.handleProofState);
 router.post('/credential-state', WebhookController.handleCredentialState);
 router.post('/connection-state', WebhookController.handleConnectionState);
 

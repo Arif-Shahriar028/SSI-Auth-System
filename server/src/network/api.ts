@@ -1,5 +1,5 @@
 
-const agent_server = process.env.AGENT_API_URL || "http://localhost:4000";
+const agent_server = process.env.AGENT_API_URL || "http://localhost:9000";
 
 const route = (url: string) => `${agent_server}${url}`;
 
@@ -8,6 +8,7 @@ export const getConnectionResult = (oobId: string) => route(`/connections?outOfB
 export const issueCredential = route('/issue-credential');
 export const revokeCredential = route('/revoke-credential');
 export const sendProofRequest = route('/send-proof-request');
+export const sendConnLessProofRequest = route('/send-conn-less-proof-request');
 export const getProofRecords = route('/get-proof-records')
 export const getProofData = (proofRecordId: string) =>  route(`/proof-data/${proofRecordId}`)
 

@@ -1,54 +1,46 @@
 import { Request, Response } from "express";
 import WebSocketService from "../services/websocket.service";
 import { getCache } from "../lib/redis";
+import { apiFetch } from "../network/fetch";
+import { getProofData } from "../network/api";
 
 export class WebhookController {
-  // static async handleProofState(req: Request, res: Response): Promise<void> {
-  //   try{
-  //     const content = req.body;
-  //     if(content.type === "proof-state"){
-  //       const proofRecordId = content.payload.id;
+  static async handleProofState(req: Request, res: Response): Promise<void> {
+    try{
+      const content = req.body;
+      if(content.type === "proof-state"){
+        const proofRecordId = content.payload.id;
 
-  //       const existingProofRecord = await ProofRequest.findOne({proofRecordId});
+        const proofRecord = await apiFetch(getProofData(proofRecordId), 'GET');
 
-  //       if(existingProofRecord){
-  //         // If state: done and verified, then save presentation
-  //         /**
-  //          * call savePresentation function from presentation controller
-  //          * pass { email, proofRecordId } to savePresentation as 
-  //          */
-  //         if(content.payload.state == 'done' && content.payload.isVerified){
-  //           const result = await PresentationController.savePresentation(existingProofRecord.email, proofRecordId, existingProofRecord.credentialId, existingProofRecord.revocationStatusId);
-  //           if(result.success){
-  //             existingProofRecord.presentationSaved = true;
-  //             existingProofRecord.presentationId = result.presentationId;
-  //           }
-  //         }
+        if(proofRecord){
+          const email = proofRecord.presentation.anoncreds.requested_proof.revealed_attr_groups.name.values.email.raw;
+          const name = proofRecord.presentation.anoncreds.requested_proof.revealed_attr_groups.name.values.name.raw;
+          const phone = proofRecord.presentation.anoncreds.requested_proof.revealed_attr_groups.name.values.phone.raw;
+          
+          console.log('proof data: ', email, name, phone);
+          WebSocketService.getInstance().notifyProofRequestUpdate(email, {
+            success: true,  
+            message: 'proof verified',
+            credentials: {
+              email,
+              name,
+              phone
+            }
+          });
+            
+          res.status(200).send({success: true})
+          return;
+        }
+        
+      }
 
-  //         existingProofRecord.status = content.payload.state;
-  //         existingProofRecord.isVerified = content.payload.isVerified ? 'verified': 'not-verified';
-  //         existingProofRecord.createdAt = new Date();
-
-  //         await existingProofRecord.save();
-
-  //         WebSocketService.getInstance().notifyProofRequestUpdate(process.env.ADMIN_EMAIL || 'admin@bracu.ac.bd', {
-  //           message: 'Proof state updated'
-  //         })
-
-  //         WebSocketService.getInstance().notifyProofRequestUpdate(existingProofRecord.email, {
-  //           message: 'Proof state updated'
-  //         })
-
-  //         res.status(200).send({success: true})
-  //         return;
-  //       }
-  //     }
-  //     res.status(401).send({success: false});
-  //   }catch(error){
-  //     console.log('error: ', error);
-  //     res.status(500).send({success: false});
-  //   }
-  // }
+      res.status(401).send({success: false});
+    }catch(error){
+      console.log('error: ', error);
+      res.status(500).send({success: false});
+    }
+  }
 
   static async handleCredentialState(req: Request, res: Response): Promise<void> {
     try{

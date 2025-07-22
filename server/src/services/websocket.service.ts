@@ -27,6 +27,8 @@ class WebSocketService {
         return;
       }
 
+      console.log('socket connected with : ', email);
+
       // Store client connection
       this.clients.set(email, ws);
       console.log(`Client connected with email: ${email}`);
