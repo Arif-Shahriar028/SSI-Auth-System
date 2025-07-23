@@ -45,7 +45,7 @@ export default function EmailPage({ onSubmit }: EmailPageProps) {
             disabled={isLoading}
             className="w-full py-4 bg-white text-purple-600 rounded-2xl font-semibold hover:bg-white/90 transform hover:scale-105 transition-all duration-300 shadow-lg disabled:opacity-70 disabled:transform-none"
           >
-            {isLoading ? 'Sending...' : 'Continue'}
+            {isLoading ? 'Loading...' : 'Continue'}
           </button>
         </form>
       </div>

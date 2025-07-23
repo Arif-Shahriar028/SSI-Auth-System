@@ -6,9 +6,15 @@ interface OtpModalProps {
   email: string;
   onVerify: (otp: string) => void;
   onClose: () => void;
+  error: string;
 }
 
-export default function OtpModal({ email, onVerify, onClose }: OtpModalProps) {
+export default function OtpModal({
+  email,
+  onVerify,
+  onClose,
+  error,
+}: OtpModalProps) {
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
@@ -81,6 +87,8 @@ export default function OtpModal({ email, onVerify, onClose }: OtpModalProps) {
           >
             Verify Code
           </button>
+
+          <p className="text-red-400 text-center">{error}</p>
 
           <p className="text-center text-white/60 text-sm">
             Didn't receive the code?{' '}

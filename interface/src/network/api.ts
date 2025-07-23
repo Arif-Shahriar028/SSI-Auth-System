@@ -9,3 +9,4 @@ export const sendOtp =  route(`otp/send`);
 export const verifyOtp = route(`otp/verify`);
 export const issueCredential = route(`credential/issue`);
 export const sendProofRequest = route(`proof/send-request`);
+export const verifyUser = route(`auth/verify`);

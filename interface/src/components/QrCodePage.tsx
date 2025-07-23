@@ -4,16 +4,10 @@ import { useEffect, useRef } from 'react';
 import QRCode from 'qrcode';
 
 interface QrCodePageProps {
-  onQrScan: () => void;
-  email: string;
   invitationUrl: string;
 }
 
-export default function QrCodePage({
-  onQrScan,
-  email,
-  invitationUrl,
-}: QrCodePageProps) {
+export default function QrCodePage({ invitationUrl }: QrCodePageProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -48,14 +42,9 @@ export default function QrCodePage({
           <canvas ref={canvasRef} className="mx-auto" />
         </div>
 
-        <p className="text-white/80 mb-6">Scan this QR code with your device</p>
-
-        <button
-          onClick={onQrScan}
-          className="w-full py-4 bg-white text-purple-600 rounded-2xl font-semibold hover:bg-white/90 transform hover:scale-105 transition-all duration-300 shadow-lg"
-        >
-          Simulate QR Scan (Demo)
-        </button>
+        <p className="text-white/80 mb-6">
+          Scan this QR code with your wallet.
+        </p>
       </div>
     </div>
   );

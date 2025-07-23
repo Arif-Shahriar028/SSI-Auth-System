@@ -8,6 +8,7 @@ export const apiFetch = async (url: string, method: string, body?: object, token
         'Content-Type': 'application/json',
         ...(token && { 'Authorization': `Bearer ${token}` }),
       },
+      credentials: 'include'
     }
     
 

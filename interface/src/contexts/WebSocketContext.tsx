@@ -14,6 +14,7 @@ interface Credentials {
   email: string;
   name: string;
   phone: string;
+  token: string;
 }
 
 interface SocketUpdateData {
