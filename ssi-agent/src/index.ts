@@ -14,7 +14,7 @@ app.use(cors());
 
 const init = async () => {
 
-  const port = 9000;
+  const port = Number(process.env.ISSUER_API_PORT) || 9000;
   const agentPublicEndpoint = process.env.ISSUER_AGENT_PUBLIC_ENDPOINT || `http://localhost:${port}`;
   const agentLabel = process.env.ISSUER_AGENT_LABEL || "MyAgent";
 
