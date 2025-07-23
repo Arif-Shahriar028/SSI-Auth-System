@@ -51,6 +51,11 @@ export class CredentialController{
       
       if(issueResponse.state === "offer-sent") {
         
+        const user = await User.findOne({email});
+        if(user){
+          user.sentCredential = true;
+          await user.save();
+        }
         // send update to student by websocket
         res.status(200).send({
           success: true,

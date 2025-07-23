@@ -15,12 +15,21 @@ export class ConnectionController {
 
       await setCache(`oobid-${email}`, result.invitation.id, 300);
 
-      const user = new User({
-        email,
-        oobId: result.invitation.id
-      })
+      const existingUser = await User.findOne({email});
 
-      await user.save();
+      if(existingUser){
+        existingUser.oobId = result.invitation.id;
+        existingUser.save();
+      }
+
+      else{
+        const user = new User({
+          email,
+          oobId: result.invitation.id
+        })
+
+        await user.save();
+      }
 
       res.status(200).send({success: true, data: result});
     }catch(error){
