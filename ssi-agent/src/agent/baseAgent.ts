@@ -36,8 +36,8 @@ export class BaseAgent {
             label: label,
             endpoints: this.endpoints,
             walletConfig: {
-                key: "brac-university-certificate",
-                id: `brac-university-certificate`,
+                key: "eshop-agent-secret-key",
+                id: `eshop-agent-id`,
 
             }
         } satisfies InitConfig
@@ -260,8 +260,6 @@ export class BaseAgent {
             domain: this.endpoints[0]
         })
 
-        console.log('------>>>> invitation url: ', invitationUrl);
-
         return invitationUrl;
     }
 
@@ -279,153 +277,5 @@ export class BaseAgent {
     public async getProofRecord(proofRecordId: string) {
         return await this.agent.proofs.findById(proofRecordId);
     }
-    public async sendMessage(connectionId: string, message: string) {
-        return await this.agent.basicMessages.sendMessage(connectionId, message)
-    }
 
-    //* -------- Revocation Registry -------- *//
-   
-    public async createRevocationRegistry(credentialDefinitionId: string, issuerDid: string) {
-        
-        const registryDefinition = await this.agent.modules.anoncreds.registerRevocationRegistryDefinition({
-            revocationRegistryDefinition: {
-              issuerId: issuerDid,
-              tag: utils.uuid(),
-              credentialDefinitionId,
-              maximumCredentialNumber: 100,
-            },
-            options: {}
-          })
-
-          console.log('Revocation Registry Definition:', registryDefinition);
-      
-          return registryDefinition
-    }
-
-    public async createRevocationStatusList(revocationRegistryDefinitionId: string, issuerId: string){
-        const revocationStatusList = await this.agent.modules.anoncreds.registerRevocationStatusList({
-            revocationStatusList: {
-              issuerId,
-              revocationRegistryDefinitionId,
-            },
-            options: {}
-          })
-
-          console.log('Revocation Status List:', revocationStatusList);
-      
-          return revocationStatusList
-    }
-
-    public async issueRevocableCredential(
-        connectionId: string, 
-        credentialDefinitionId: string,
-        revocationRegistryDefinitionId: string,
-        revocationRegistryIndex: number,
-        attributes: AttributeElement[]
-      ) {
-        return await this.agent.credentials.offerCredential({
-          connectionId,
-          credentialFormats: {
-            anoncreds: {
-              credentialDefinitionId,
-              attributes,
-              revocationRegistryDefinitionId,
-              revocationRegistryIndex,
-            }
-          },
-          protocolVersion: 'v2'
-        })
-      }
-
-    public async revokeCredential(
-        credentialId: string,
-    ) {
-    const credentialRecord = await this.agent.credentials.getById(credentialId);
-
-    const credentialRevocationRegistryDefinitionId =
-    credentialRecord.getTag("anonCredsRevocationRegistryId") as string;
-
-    const credentialRevocationIndex = credentialRecord.getTag(
-      "anonCredsCredentialRevocationId"
-    ) as string;
-
-    console.log("REVOKING CREDENTIAL ", credentialRevocationIndex);
-
-    const currentStatus = await this.agent.modules.anoncreds.getRevocationStatusList( credentialRevocationRegistryDefinitionId, Math.floor(Date.now() / 1000));
-
-    console.log("BEFORE CREDENTIAL REVOCATION ATTEMPT ==>>", credentialRevocationIndex, currentStatus.revocationStatusList?.revocationList);
-
-    const currentRevocationList = currentStatus.revocationStatusList?.revocationList || [];
-    const issuedIndices = currentRevocationList.map((_, index) => index);
-
-    console.log('ISSUED indicies: ', issuedIndices);
-    // let currentRevocationIndex = [];
-    // let issuedCredentials = [];
-
-    // for(let i=0; i<currentRevocationList.length; i++){
-    //     if(i == Number(credentialRevocationIndex)) continue;
-    //     if(currentRevocationList[i]==1){
-    //         currentRevocationIndex.push(i);
-    //     }else {
-    //         issuedCredentials.push(i);
-    //     }
-    // }
-
-    // console.log('currentRevocationIndex: ', currentRevocationIndex);
-    // console.log('issuedCredentials: ', issuedCredentials);
-
-    const statusList =
-      await this.agent.modules.anoncreds.updateRevocationStatusList({
-        revocationStatusList: {
-          revocationRegistryDefinitionId: credentialRevocationRegistryDefinitionId,
-          revokedCredentialIndexes: [Number(credentialRevocationIndex)],
-        //   issuedCredentialIndexes: issuedIndices,
-        },
-        options: {
-            publish: true
-        },
-      });
-
-      console.log(JSON.stringify(statusList));
-
-      console.log("AFTER CREDENTIAL REVOCATION ATTEMPT ==>>", credentialRevocationIndex, statusList.revocationStatusListState.state);
-      
-      await this.agent.credentials.sendRevocationNotification({
-        credentialRecordId: credentialRecord.id,
-        revocationFormat: "anoncreds",
-        revocationId: `${credentialRevocationRegistryDefinitionId}::${credentialRevocationIndex}`,
-      });
-
-      return;
-    }
-      
-    
-
-    //*-------------------------- END --------------------------*//
-
-    private generateRandomString(length: number) {
-        const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-        let result = '';
-        for (let i = 0; i < length; i++) {
-            const randomIndex = Math.floor(Math.random() * charset.length);
-            result += charset[randomIndex];
-        }
-        return result;
-    }
-
-    public async createAndPublishDID(method: string, namespace?: string) {
-        const didResult = await this.agent.dids.create({
-            method: method,
-            options: {
-              keyType: KeyType.Ed25519,
-            }
-          });
-      
-          const state = didResult.didState.state;
-          if (state === "failed") {
-            throw new Error(didResult.didState.reason);
-          }
-          console.log((`DID created: ${didResult.didState.did}`));
-          return didResult;
-    }
 }

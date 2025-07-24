@@ -78,15 +78,4 @@ export class CredentialController {
       res.status(500).send({ error: error.message });
     }
   }
-
-  static async revokeCredential(req: Request, res: Response, agent: BaseAgent) {
-    const { credentialId } = req.body;
-    try {
-      await agent.revokeCredential(credentialId);
-      res.status(200).send({message: "Credential revoked successfully"});
-    } catch (error: any) {
-      console.log('error: ', error);
-      res.status(500).send({ error: error.message });
-    }
-  }
 }
