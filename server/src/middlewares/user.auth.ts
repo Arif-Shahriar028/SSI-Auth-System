@@ -9,10 +9,13 @@ export interface AuthRequest extends Request {
 
 export const userAuth = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
-    console.log('cookie token: ', req.cookies.token);
     const token = req.cookies.token || req.header('Authorization')?.replace('Bearer ', '');
     
-    if (!token) throw new Error();
+    if (!token) {
+      console.log('ERROR:: token not provided');
+      res.status(400).json({ success: false, error: 'Please authenticate' });
+      return;
+    }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET || 'my-secret-key') as {
       email: string;
